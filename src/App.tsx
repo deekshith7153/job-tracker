@@ -11,6 +11,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 
 type Status = "Applied" | "Referred" | "OA" | "Interview" | "Offer" | "Rejected" | "Ghosted";
 type Priority = "High" | "Medium" | "Low";
+type StatusFilter = Status | "All";
+type PriorityFilter = Priority | "All";
 
 interface Application {
   id: string;
@@ -62,8 +64,8 @@ function daysSince(dateStr: string): number {
 
 export default function App() {
   const [apps, setApps] = useState<Application[]>(INITIAL_DATA);
-  const [filterStatus, setFilterStatus] = useState<Status | "All">("All");
-  const [filterPriority, setFilterPriority] = useState<Priority | "All">("All");
+  const [filterStatus, setFilterStatus] = useState<StatusFilter>("All");
+  const [filterPriority, setFilterPriority] = useState<PriorityFilter>("All");
   const [search, setSearch] = useState("");
   const [editingApp, setEditingApp] = useState<Application | null>(null);
   const [addOpen, setAddOpen] = useState(false);
@@ -166,7 +168,14 @@ export default function App() {
           <Input placeholder="Search companies, roles, contacts…" value={search}
             onChange={e => setSearch(e.target.value)}
             className="max-w-xs bg-white border-gray-200 text-sm h-9" />
-          <Select value={filterStatus} onValueChange={v => setFilterStatus(v as any)}>
+          <Select
+            value={filterStatus}
+            onValueChange={(v) =>
+              setFilterStatus(
+                (["All", ...STATUSES] as readonly string[]).includes(v) ? (v as StatusFilter) : "All"
+              )
+            }
+          >
             <SelectTrigger className="w-36 bg-white border-gray-200 text-sm h-9">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
@@ -175,7 +184,16 @@ export default function App() {
               {STATUSES.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
             </SelectContent>
           </Select>
-          <Select value={filterPriority} onValueChange={v => setFilterPriority(v as any)}>
+          <Select
+            value={filterPriority}
+            onValueChange={(v) =>
+              setFilterPriority(
+                (["All", ...PRIORITIES] as readonly string[]).includes(v)
+                  ? (v as PriorityFilter)
+                  : "All"
+              )
+            }
+          >
             <SelectTrigger className="w-36 bg-white border-gray-200 text-sm h-9">
               <SelectValue placeholder="Priority" />
             </SelectTrigger>
